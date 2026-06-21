@@ -27,13 +27,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
+          
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Generar Reporte de Cobertura para Sonar
+        run: |
+          pip install -r requirements.txt pytest pytest-cov
+          pytest --cov=app --cov-report=xml tests/test_unit.py || echo "Tests passed or failed but XML generated"
+          
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # Nota: Asegúrate de crear un archivo sonar-project.properties en la raíz del proyecto para la configuración de Sonar
 
   semgrep:
     name: Semgrep Scan
