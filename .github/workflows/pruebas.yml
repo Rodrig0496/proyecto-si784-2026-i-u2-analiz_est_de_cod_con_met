@@ -65,8 +65,8 @@ jobs:
         if: ${{ github.event.inputs.ejecutar_mutantes == 'true' }}
         run: |
           mutmut run || echo "Se detectaron mutantes que sobrevivieron"
-          mutmut html
-          mv html public/mutmut
+          mkdir -p public/mutmut
+          echo "<html><body><h1>Mutmut log (Revisar en consola de Actions)</h1></body></html>" > public/mutmut/index.html
 
       - name: Pruebas de Interfaz (UI)
         if: ${{ github.event.inputs.ejecutar_ui == 'true' }}
