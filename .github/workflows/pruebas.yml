@@ -1,6 +1,10 @@
 name: Pruebas Automatizadas
 
 on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
     inputs:
       ejecutar_unitarias_integracion:
@@ -57,24 +61,24 @@ jobs:
         run: mkdir -p public
 
       - name: Pruebas Unitarias e Integración
-        if: ${{ github.event.inputs.ejecutar_unitarias_integracion == 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.ejecutar_unitarias_integracion == 'true' }}
         run: |
           PYTHONPATH=. pytest --cov=app --cov-report=html:public/coverage --cov-report=xml tests/test_unit.py
 
       - name: Pruebas de Mutación (mutmut)
-        if: ${{ github.event.inputs.ejecutar_mutantes == 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.ejecutar_mutantes == 'true' }}
         run: |
           mutmut run || echo "Se detectaron mutantes que sobrevivieron"
           mkdir -p public/mutmut
           echo "<html><body><h1>Mutmut log (Revisar en consola de Actions)</h1></body></html>" > public/mutmut/index.html
 
       - name: Pruebas de Interfaz (UI)
-        if: ${{ github.event.inputs.ejecutar_ui == 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.ejecutar_ui == 'true' }}
         run: |
           PYTHONPATH=. pytest tests/ui/ --video=on --output=public/ui-videos || echo "Algunas pruebas de interfaz fallaron"
 
       - name: Pruebas BDD
-        if: ${{ github.event.inputs.ejecutar_bdd == 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.ejecutar_bdd == 'true' }}
         run: |
           PYTHONPATH=. pytest tests/step_defs/ || echo "Algunas pruebas BDD fallaron"
           
