@@ -59,7 +59,7 @@ jobs:
       - name: Pruebas Unitarias e Integración
         if: ${{ github.event.inputs.ejecutar_unitarias_integracion == 'true' }}
         run: |
-          pytest --cov=app --cov-report=html:public/coverage --cov-report=xml tests/test_unit.py
+          PYTHONPATH=. pytest --cov=app --cov-report=html:public/coverage --cov-report=xml tests/test_unit.py
 
       - name: Pruebas de Mutación (mutmut)
         if: ${{ github.event.inputs.ejecutar_mutantes == 'true' }}
@@ -71,12 +71,12 @@ jobs:
       - name: Pruebas de Interfaz (UI)
         if: ${{ github.event.inputs.ejecutar_ui == 'true' }}
         run: |
-          pytest tests/ui/ --video=on --output=public/ui-videos || echo "Algunas pruebas de interfaz fallaron"
+          PYTHONPATH=. pytest tests/ui/ --video=on --output=public/ui-videos || echo "Algunas pruebas de interfaz fallaron"
 
       - name: Pruebas BDD
         if: ${{ github.event.inputs.ejecutar_bdd == 'true' }}
         run: |
-          pytest tests/step_defs/ || echo "Algunas pruebas BDD fallaron"
+          PYTHONPATH=. pytest tests/step_defs/ || echo "Algunas pruebas BDD fallaron"
           
       - name: Create index.html for reports
         run: |

@@ -37,7 +37,7 @@ jobs:
       - name: Generar Reporte de Cobertura para Sonar
         run: |
           pip install -r requirements.txt pytest pytest-cov
-          pytest --cov=app --cov-report=xml tests/test_unit.py || echo "Tests passed or failed but XML generated"
+          PYTHONPATH=. pytest --cov=app --cov-report=xml tests/test_unit.py || echo "Tests passed or failed but XML generated"
           
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
